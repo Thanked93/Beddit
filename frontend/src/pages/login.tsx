@@ -5,12 +5,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import InputField from "../components/InputField";
 import Wrapper from "../components/Wrapper";
-import {
-  MeDocument,
-  MeQuery,
-  useLoginMutation,
-  useMeQuery,
-} from "../generated/graphql";
+import { MeDocument, MeQuery, useLoginMutation } from "../generated/graphql";
 import { hocApollo } from "../utils/myapollo";
 import { toErrorMap } from "../utils/toErrorMap";
 export const Login: React.FC<{}> = ({}) => {

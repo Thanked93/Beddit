@@ -1,6 +1,7 @@
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import { Box, IconButton, Link } from "@chakra-ui/react";
 import NextLink from "next/link";
+import { useRouter } from "next/router";
 import React from "react";
 import { useDeletePostMutation, useMeQuery } from "../generated/graphql";
 import { hocApollo } from "../utils/myapollo";
@@ -13,6 +14,7 @@ interface ButtonPairProps {
 export const ButtonPair: React.FC<ButtonPairProps> = ({ id, creatorId }) => {
   const [deletePost] = useDeletePostMutation();
   const { data: meData } = useMeQuery();
+  const router = useRouter();
 
   if (!meData?.me) {
     return null;
@@ -37,6 +39,7 @@ export const ButtonPair: React.FC<ButtonPairProps> = ({ id, creatorId }) => {
               cache.evict({ id: "Post:" + id });
             },
           });
+          router.push("/");
         }}
       />
     </Box>

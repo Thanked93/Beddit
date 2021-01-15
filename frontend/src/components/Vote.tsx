@@ -44,6 +44,7 @@ const updateAfterVote = (
       }
     `,
   });
+  console.log(data);
   if (data) {
     if (data.voteStatus === value) {
       return;
@@ -51,8 +52,8 @@ const updateAfterVote = (
     const newPoints =
       (data.points as number) + (!data.voteStatus ? 1 : 2) * value;
     cache.writeFragment({
+      id: "Post:" + postId,
       fragment: gql`
-      id:"Post:"+postId,
         fragment __ on Post {
           points
           voteStatus
@@ -109,7 +110,9 @@ export const Vote: React.FC<VoteProps> = ({ post }) => {
               postId: post.id,
               value: -1,
             },
-            update: (cache) => updateAfterVote(-1, post.id, cache),
+            update: (cache) => {
+              updateAfterVote(-1, post.id, cache);
+            },
           });
           setLoading("not-loading");
         }}
