@@ -5,9 +5,11 @@ import { createUpvoteLoader } from "./utils/createUpvoteLoader";
 import { createUserLoader } from "./utils/createUserLoader";
 
 export type MyContext = {
-  req: Request & { session: session.Session & { userId?: number } };
+  req: Req;
   res: Response;
   redis: Redis;
   userLoader: ReturnType<typeof createUserLoader>;
   upvoteLoader: ReturnType<typeof createUpvoteLoader>;
 };
+
+export type Req = Request & { session: session.Session & { userId?: number } };

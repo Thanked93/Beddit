@@ -12,9 +12,9 @@
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Thanked93/Reddit/issues"
+    "url": "https://github.com/Thanked93/Beddit/issues"
   },
-  "homepage": "https://github.com/Thanked93/Reddit#readme",
+  "homepage": "https://github.com/Thanked93/Beddit#readme",
   "devDependencies": {
     "@types/connect-redis": "^0.0.16",
     "@types/cors": "^2.8.9",
@@ -37,6 +37,7 @@
     "connect-redis": "^5.0.0",
     "cors": "^2.8.5",
     "dataloader": "^2.0.0",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-session": "1.17.0",
     "graphql": "^15.4.0",

@@ -4,7 +4,7 @@ import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import { HelloResolver } from "./resolver/hello";
 import { PostResolver } from "./resolver/post";
-import { UserResolver } from "./resolver/user";
+import { UserResolver } from "./resolver/user/userResolver";
 import cors from "cors";
 import Redis from "ioredis";
 import session from "express-session";
@@ -17,11 +17,10 @@ import path from "path";
 import { Upvote } from "./entities/Upvote";
 import { createUserLoader } from "./utils/createUserLoader";
 import { createUpvoteLoader } from "./utils/createUpvoteLoader";
-import "dotenv-safe/config";
-
 require("dotenv").config();
 
 const main = async () => {
+  console.log(process.env);
   const con = await createConnection({
     type: "postgres",
     database: process.env.DATABASE_NAME,
@@ -60,7 +59,7 @@ const main = async () => {
         secure: __prod__,
       },
       saveUninitialized: false,
-      secret: process.env.COOKIE_SECRET,
+      secret: process.env.COOKIE_SECRET as string,
       resave: false,
     })
   );
@@ -84,7 +83,7 @@ const main = async () => {
     cors: false,
   });
 
-  app.listen(parseInt(process.env.PORT), () => {
+  app.listen(process.env.PORT, () => {
     console.log("Server started");
   });
 };
