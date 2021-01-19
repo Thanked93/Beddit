@@ -10,6 +10,7 @@ import {
 import { Field, Int, ObjectType } from "type-graphql";
 import { Post } from "./Post";
 import { Upvote } from "./Upvote";
+import { Comment } from "./Comment";
 
 @ObjectType()
 @Entity()
@@ -42,4 +43,7 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Post, (post) => post.creator)
   posts: Post[];
+
+  @OneToMany(() => Comment, (comment) => comment.creator)
+  comment: Comment[];
 }

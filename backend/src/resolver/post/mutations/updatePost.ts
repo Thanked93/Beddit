@@ -1,6 +1,4 @@
-import { Request } from "express";
-import session from "express-session";
-import { Post } from "src/entities/Post";
+import { Post } from "../../../entities/Post";
 import { getConnection } from "typeorm";
 import { Req } from "../../../types";
 

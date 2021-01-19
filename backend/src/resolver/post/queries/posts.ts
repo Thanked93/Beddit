@@ -1,3 +1,4 @@
+import { Post } from "../../../entities/Post";
 import { getConnection } from "typeorm";
 import { PaginatedPost } from "../types/PaginatedPost";
 
@@ -15,7 +16,7 @@ export async function posts(
   const postPaginated = await getConnection().query(
     `
         Select p.* from post p
-        ${cursor && `where p."createdAt" < $2`}
+        ${cursor ? `where p."createdAt" < $2` : ""}
         order by p."createdAt" DESC
         limit $1
     `,

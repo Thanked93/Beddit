@@ -11,6 +11,7 @@ import {
 import { Field, Int, ObjectType } from "type-graphql";
 import { User } from "./User";
 import { Upvote } from "./Upvote";
+import { Comment } from "./Comment";
 
 @ObjectType()
 @Entity()
@@ -52,4 +53,8 @@ export class Post extends BaseEntity {
 
   @OneToMany(() => Upvote, (upvote) => upvote.user)
   upvote: Upvote[];
+
+  @Field(() => Comment, { nullable: true })
+  @OneToMany(() => Comment, (comment) => comment.post)
+  comments: Comment[];
 }

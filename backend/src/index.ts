@@ -3,8 +3,9 @@ import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import { HelloResolver } from "./resolver/hello";
-import { PostResolver } from "./resolver/post";
+import { PostResolver } from "./resolver/post/postResolver";
 import { UserResolver } from "./resolver/user/userResolver";
+import { CommentResolver } from "./resolver/comment/CommentResolver";
 import cors from "cors";
 import Redis from "ioredis";
 import session from "express-session";
@@ -17,19 +18,19 @@ import path from "path";
 import { Upvote } from "./entities/Upvote";
 import { createUserLoader } from "./utils/createUserLoader";
 import { createUpvoteLoader } from "./utils/createUpvoteLoader";
+import { Comment } from "./entities/Comment";
 require("dotenv").config();
 
 const main = async () => {
-  console.log(process.env);
   const con = await createConnection({
     type: "postgres",
     database: process.env.DATABASE_NAME,
     username: process.env.DATABASE_USERNAME,
     password: process.env.DATABASE_PASSWORD,
-    logging: true,
+    logging: false,
     synchronize: true,
     migrations: [path.join(__dirname, "./migrations/*")],
-    entities: [Post, User, Upvote],
+    entities: [Post, User, Upvote, Comment],
   });
   await con.runMigrations();
 
@@ -66,7 +67,7 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver, PostResolver, UserResolver],
+      resolvers: [HelloResolver, PostResolver, UserResolver, CommentResolver],
       validate: false,
     }),
     context: ({ req, res }) => ({

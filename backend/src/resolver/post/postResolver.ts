@@ -1,4 +1,4 @@
-import { MyContext } from "src/types";
+import { MyContext } from "../../types";
 import {
   Arg,
   Ctx,
@@ -19,6 +19,7 @@ import { vote } from "./mutations/vote";
 import { posts } from "./queries/posts";
 import { PaginatedPost } from "./types/PaginatedPost";
 import { PostInput } from "./types/PostInput";
+import { PostResponse } from "./types/PostResponse";
 
 @Resolver(Post)
 export class PostResolver {
@@ -70,12 +71,12 @@ export class PostResolver {
     return Post.findOne(id);
   }
 
-  @Mutation(() => Post)
+  @Mutation(() => PostResponse)
   @UseMiddleware(isAuth)
   async createPost(
     @Arg("input") input: PostInput,
     @Ctx() { req }: MyContext
-  ): Promise<Post> {
+  ): Promise<PostResponse> {
     return await createPost(input, req);
   }
 

@@ -1,11 +1,11 @@
-import { Upvote } from "src/entities/Upvote";
+import { Upvote } from "../../../entities/Upvote";
 import { getConnection } from "typeorm";
 import { Req } from "../../../types";
 
 export async function vote(id: number, value: number, req: Req) {
   const upvoteValue = value > 0 ? 1 : -1;
   const { userId } = req.session;
-  const upvoteEntry = await Upvote.findOne({ where: { id, userId } });
+  const upvoteEntry = await Upvote.findOne({ where: { postId: id, userId } });
 
   if (upvoteEntry && upvoteEntry.score !== upvoteValue) {
     await getConnection().transaction(async (tm) => {
