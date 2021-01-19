@@ -1,12 +1,14 @@
 import { Box, Flex, Heading, Stack } from "@chakra-ui/react";
 import React from "react";
-import { useCommentQuery } from "../generated/graphql";
+import { Comment, useCommentQuery } from "../generated/graphql";
+import { hocApollo } from "../utils/myapollo";
+import ButtonPair from "./ButtonPair";
 
 interface CommentProps {
   singlePostId: number;
 }
 
-export const Comment: React.FC<CommentProps> = ({ singlePostId }) => {
+export const CommentView: React.FC<CommentProps> = ({ singlePostId }) => {
   const { data, loading } = useCommentQuery({
     skip: singlePostId === -1,
     variables: {
@@ -14,13 +16,17 @@ export const Comment: React.FC<CommentProps> = ({ singlePostId }) => {
     },
   });
 
+  if (!data?.comment) {
+    return null;
+  }
+
   if (!data?.comment && loading) {
-    return <div>Hello</div>;
+    return null;
   }
 
   return (
     <Stack mt={5} mb={10}>
-      {data.comment.map((com) => {
+      {data.comment.map((com: Comment) => {
         return (
           <Flex
             key={com.id}
@@ -29,10 +35,11 @@ export const Comment: React.FC<CommentProps> = ({ singlePostId }) => {
             borderColor={"#8a948d"}
             minH="85px"
           >
-            <Heading size="sm">{com.creatorId}</Heading>
+            <Heading size="sm">{com.creator.username}</Heading>
             <Box mx={3} mt={3} size="md">
               {com.text}
             </Box>
+            <ButtonPair />
           </Flex>
         );
       })}
@@ -40,4 +47,4 @@ export const Comment: React.FC<CommentProps> = ({ singlePostId }) => {
   );
 };
 
-export default Comment;
+export default hocApollo({ ssr: false })(CommentView);

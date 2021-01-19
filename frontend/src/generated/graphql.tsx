@@ -77,6 +77,7 @@ export type Comment = {
   createdAt: Scalars["String"];
   updatedAt: Scalars["String"];
   postId: Scalars["Float"];
+  creator: User;
 };
 
 export type Mutation = {
@@ -90,6 +91,7 @@ export type Mutation = {
   register: UserResponse;
   login: UserResponse;
   logout: Scalars["Boolean"];
+  deleteComment: Scalars["Boolean"];
   createComment?: Maybe<CommentResponse>;
 };
 
@@ -130,9 +132,13 @@ export type MutationLoginArgs = {
   usernameOrEmail: Scalars["String"];
 };
 
+export type MutationDeleteCommentArgs = {
+  commentId: Scalars["Int"];
+};
+
 export type MutationCreateCommentArgs = {
   text: Scalars["String"];
-  CommentId?: Maybe<Scalars["Int"]>;
+  commentId?: Maybe<Scalars["Int"]>;
   postId?: Maybe<Scalars["Int"]>;
 };
 
@@ -184,8 +190,8 @@ export type PostSnippetFragment = { __typename?: "Post" } & Pick<
 
 export type RegularCommentFragment = { __typename?: "Comment" } & Pick<
   Comment,
-  "id" | "text" | "creatorId" | "postId" | "updatedAt"
->;
+  "id" | "text" | "postId" | "updatedAt"
+> & { creator: { __typename?: "User" } & Pick<User, "id" | "username"> };
 
 export type RegularCommentResponseFragment = {
   __typename?: "CommentResponse";
@@ -316,12 +322,7 @@ export type CommentQueryVariables = Exact<{
 }>;
 
 export type CommentQuery = { __typename?: "Query" } & {
-  comment: Array<
-    { __typename?: "Comment" } & Pick<
-      Comment,
-      "id" | "text" | "postId" | "creatorId"
-    >
-  >;
+  comment: Array<{ __typename?: "Comment" } & RegularCommentFragment>;
 };
 
 export type MeQueryVariables = Exact<{ [key: string]: never }>;
@@ -385,9 +386,12 @@ export const RegularCommentFragmentDoc = gql`
   fragment RegularComment on Comment {
     id
     text
-    creatorId
     postId
     updatedAt
+    creator {
+      id
+      username
+    }
   }
 `;
 export const RegularCommentResponseFragmentDoc = gql`
@@ -920,12 +924,10 @@ export type VoteMutationOptions = Apollo.BaseMutationOptions<
 export const CommentDocument = gql`
   query Comment($postId: Int!) {
     comment(postId: $postId) {
-      id
-      text
-      postId
-      creatorId
+      ...RegularComment
     }
   }
+  ${RegularCommentFragmentDoc}
 `;
 
 /**

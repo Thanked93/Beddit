@@ -1,7 +1,10 @@
 fragment RegularComment on Comment {
   id
   text
-  creatorId
   postId
   updatedAt
+  creator {
+    id
+    username
+  }
 }

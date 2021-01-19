@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 import { Box, Link, Flex, Button, Heading } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { useLogoutMutation, useMeQuery } from "../generated/graphql";
@@ -6,14 +6,20 @@ import { isServer } from "../utils/isServer";
 import { useRouter } from "next/router";
 import { useApolloClient } from "@apollo/client";
 import { hocApollo } from "../utils/myapollo";
+import CreatePost from "./modal/CreatePost";
 
 export const NavBar = () => {
-  const router = useRouter();
+  const [showModal, setShowModal] = useState<boolean>(false);
   const [logout, { loading: logoutloading }] = useLogoutMutation();
   const apolloClient = useApolloClient();
   const { data, loading } = useMeQuery({
     skip: isServer(),
   });
+
+  const toggleModal = () => {
+    setShowModal((prev) => !prev);
+  };
+
   let body = <></>;
   if (loading) {
   } else if (!data?.me) {
@@ -30,9 +36,10 @@ export const NavBar = () => {
   } else {
     body = (
       <Flex ml="auto" align="center">
-        <NextLink href="/create-post">
-          <Button mr={10}>Create Post</Button>
-        </NextLink>
+        <Button mx="auto" onClick={toggleModal}>
+          Create Post
+        </Button>
+        <Box>{!showModal ? null : <CreatePost closeModal={toggleModal} />}</Box>
         <Box mr={2}>Hello {data.me.username}</Box>
         <Button
           variant="link"

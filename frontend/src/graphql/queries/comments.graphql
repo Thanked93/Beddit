@@ -1,8 +1,5 @@
 query Comment($postId: Int!) {
   comment(postId: $postId) {
-    id
-    text
-    postId
-    creatorId
+    ...RegularComment
   }
 }

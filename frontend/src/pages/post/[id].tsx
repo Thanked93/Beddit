@@ -5,7 +5,7 @@ import Layout from "../../components/Layout";
 import { useCommentQuery, useSinglePostQuery } from "../../generated/graphql";
 import { hocApollo } from "../../utils/myapollo";
 import { UseIdFromUrl } from "../../utils/useIdFromUrl";
-import Comment from "../../components/Comment";
+import CommentView from "../../components/CommentView";
 
 export const Post = ({}) => {
   const singlePostId = UseIdFromUrl();
@@ -39,7 +39,7 @@ export const Post = ({}) => {
         id={data.singlePost.id}
         creatorId={data.singlePost.creator.id}
       />
-      <Comment singlePostId={singlePostId} />
+      <CommentView singlePostId={singlePostId} />
     </Layout>
   );
 };
