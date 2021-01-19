@@ -6,6 +6,7 @@ import InputField from "../components/InputField";
 import Layout from "../components/Layout";
 import { useCreatePostMutation } from "../generated/graphql";
 import { hocApollo } from "../utils/myapollo";
+import { toErrorMap } from "../utils/toErrorMap";
 import { useIsAuth } from "../utils/useIsAuth";
 
 const CreatePost: React.FC<{}> = ({}) => {
@@ -18,13 +19,15 @@ const CreatePost: React.FC<{}> = ({}) => {
     <Layout variant="regular">
       <Formik
         initialValues={{ title: "", text: "" }}
-        onSubmit={async (values) => {
-          const { errors } = await createPost({
+        onSubmit={async (values, { setErrors }) => {
+          const response = await createPost({
             variables: { input: values },
             update: (cache) => cache.evict({ fieldName: "posts" }),
           });
-          if (!errors) {
-            router.push("/");
+          if (response.data?.createPost.errors) {
+            setErrors(toErrorMap(response.data.createPost.errors));
+          } else {
+            router.push(`/post/${response.data.createPost.post.id}`);
           }
         }}
       >

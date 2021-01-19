@@ -1,10 +1,11 @@
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
-import { Box, IconButton, Link } from "@chakra-ui/react";
+import { Box, Flex, IconButton, Link } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
 import { useDeletePostMutation, useMeQuery } from "../generated/graphql";
 import { hocApollo } from "../utils/myapollo";
+import ReplyButton from "./customButtons/ReplyButton";
 
 interface ButtonPairProps {
   id: number;
@@ -21,28 +22,35 @@ export const ButtonPair: React.FC<ButtonPairProps> = ({ id, creatorId }) => {
   }
 
   if (meData.me.id !== creatorId) {
-    return null;
+    return (
+      <Box>
+        <ReplyButton postId={id} />
+      </Box>
+    );
   }
 
   return (
-    <Box ml="auto">
-      <NextLink href="/post/edit/[id]" as={`/post/edit/${id}`}>
-        <IconButton as={Link} aria-label="Edit Post" icon={<EditIcon />} />
-      </NextLink>
-      <IconButton
-        aria-label="Delete Post"
-        icon={<DeleteIcon />}
-        onClick={() => {
-          deletePost({
-            variables: { id },
-            update: (cache) => {
-              cache.evict({ id: "Post:" + id });
-            },
-          });
-          router.push("/");
-        }}
-      />
-    </Box>
+    <Flex ml={1} flexDirection="row">
+      <Box>
+        <NextLink href="/post/edit/[id]" as={`/post/edit/${id}`}>
+          <IconButton as={Link} aria-label="Edit Post" icon={<EditIcon />} />
+        </NextLink>
+        <IconButton
+          aria-label="Delete Post"
+          icon={<DeleteIcon />}
+          onClick={() => {
+            deletePost({
+              variables: { id },
+              update: (cache) => {
+                cache.evict({ id: "Post:" + id });
+              },
+            });
+            router.push("/");
+          }}
+        />
+        <ReplyButton postId={id} />
+      </Box>
+    </Flex>
   );
 };
 

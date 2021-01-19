@@ -1,0 +1,8 @@
+fragment RegularPostRepsonse on PostResponse {
+  post {
+    ...RegularPost
+  }
+  errors {
+    ...RegularError
+  }
+}

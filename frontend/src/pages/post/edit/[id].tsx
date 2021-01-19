@@ -9,7 +9,6 @@ import {
   useSinglePostQuery,
   useUpdatePostMutation,
 } from "../../../generated/graphql";
-import { createUrqlClient } from "../../../utils/createUrqlClient";
 import { hocApollo } from "../../../utils/myapollo";
 import { UseIdFromUrl } from "../../../utils/useIdFromUrl";
 
@@ -51,24 +50,31 @@ export const EditPost = ({}) => {
           router.back();
         }}
       >
-        {({ isSubmitting }) => (
-          <Form>
-            <InputField name="title" placeholder="title" label="Title" />
-            <Box mt={4}>
-              <InputField
-                isTextarea
-                name="text"
-                placeholder="text..."
-                label="Body"
-              />
-            </Box>
+        {({ isSubmitting }) => {
+          <Box>
+            <Form>
+              <InputField name="title" placeholder="title" label="Title" />
+              <Box mt={4}>
+                <InputField
+                  isTextarea
+                  name="text"
+                  placeholder="text..."
+                  label="Body"
+                />
+              </Box>
 
-            <Button mt={6} type="submit" isLoading={isSubmitting}>
-              {" "}
-              update Post{" "}
-            </Button>
-          </Form>
-        )}
+              <Button
+                mt={6}
+                type="submit"
+                bg="#8a948d"
+                isLoading={isSubmitting}
+              >
+                {" "}
+                update Post{" "}
+              </Button>
+            </Form>
+          </Box>;
+        }}
       </Formik>
     </Layout>
   );

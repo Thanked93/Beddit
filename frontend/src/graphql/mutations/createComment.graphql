@@ -1,0 +1,5 @@
+mutation CreateComment($text: String!, $postId: Int!) {
+  createComment(text: $text, postId: $postId) {
+    ...RegularCommentResponse
+  }
+}

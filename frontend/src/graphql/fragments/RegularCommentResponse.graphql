@@ -1,0 +1,8 @@
+fragment RegularCommentResponse on CommentResponse {
+  errors {
+    ...RegularError
+  }
+  comment {
+    ...RegularComment
+  }
+}

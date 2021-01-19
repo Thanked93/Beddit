@@ -40,20 +40,24 @@ const Index = () => {
           {data!.posts.posts.map((post) =>
             !post ? null : (
               <Box key={post.id} p={5} shadow="md" borderWidth="2px">
-                <Flex>
+                <Flex alignItems="center">
                   <NextLink href="/post/[id]" as={`/post/${post.id}`}>
                     <Link>
-                      <Heading fontSize="xl">{post.title}</Heading>
+                      <Heading fontSize="2xl">{post.title}</Heading>
                     </Link>
                   </NextLink>
-                  <Text right={0} ml="auto" fontSize={15}>
+                  <Text ml={2} fontSize={15}>
                     posted By {post.creator.username}
                   </Text>
-                </Flex>
-                <Vote post={post} />
-                <ButtonPair id={post.id} creatorId={post.creator.id} />
 
-                <Text>{post.textSnippet}...</Text>
+                  <Vote post={post} />
+                </Flex>
+                <Flex mt={3} align="center">
+                  <Text>{post.textSnippet}...</Text>
+                  <Box ml="auto" right={0}>
+                    <ButtonPair id={post.id} creatorId={post.creator.id} />
+                  </Box>
+                </Flex>
               </Box>
             )
           )}

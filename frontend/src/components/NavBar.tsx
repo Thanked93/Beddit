@@ -18,22 +18,20 @@ export const NavBar = () => {
   if (loading) {
   } else if (!data?.me) {
     body = (
-      <>
-        <NextLink href="/login">
-          <Link mr={2}>login</Link>
-        </NextLink>
-        <NextLink href="/register">
-          <Link>Register</Link>
-        </NextLink>
-      </>
+      <Flex ml="auto" justifyContent="space-around">
+        <Box mr={6}>
+          <NextLink href="/login">Login</NextLink>
+        </Box>
+        <Box paddingRight={30}>
+          <NextLink href="/register">Register</NextLink>
+        </Box>
+      </Flex>
     );
   } else {
     body = (
-      <Flex align="center">
+      <Flex ml="auto" align="center">
         <NextLink href="/create-post">
-          <Button mr={10} as={Link}>
-            <Link>create Post</Link>
-          </Button>
+          <Button mr={10}>Create Post</Button>
         </NextLink>
         <Box mr={2}>Hello {data.me.username}</Box>
         <Button
@@ -51,7 +49,7 @@ export const NavBar = () => {
   }
 
   return (
-    <Flex zIndex={1} position="sticky" top={0} bg="tan" p={4}>
+    <Flex zIndex={1} position="sticky" top={0} bg="#8a948d" p={4}>
       <Flex flex={1} m="auto" maxW={800} align="center">
         <NextLink href="/">
           <Link>
@@ -59,7 +57,7 @@ export const NavBar = () => {
           </Link>
         </NextLink>
 
-        <Box ml={"auto"}>{body}</Box>
+        {body}
       </Flex>
     </Flex>
   );

@@ -44,7 +44,6 @@ const updateAfterVote = (
       }
     `,
   });
-  console.log(data);
   if (data) {
     if (data.voteStatus === value) {
       return;
@@ -70,10 +69,17 @@ export const Vote: React.FC<VoteProps> = ({ post }) => {
     "loading-Up" | "loading-Down" | "not-loading"
   >("not-loading");
   return (
-    <Flex direction="column" justifyContent="center" alignItems="center">
+    <Flex ml="auto" right={0} justifyContent="center" alignItems="center">
       <IconButton
         ml={2}
-        colorScheme={post.voteStatus === 1 ? "green" : undefined}
+        mr={3}
+        colorScheme={
+          post.voteStatus === 1
+            ? "green"
+            : post.voteStatus === -1
+            ? undefined
+            : "teal"
+        }
         aria-label="upvote"
         icon={<ChevronUpIcon />}
         isLoading={loading === "loading-Up"}
@@ -93,13 +99,19 @@ export const Vote: React.FC<VoteProps> = ({ post }) => {
           setLoading("not-loading");
         }}
       />
-      {post.points}
+      <Box fontSize="xl">{post.points}</Box>
       <IconButton
-        ml={2}
+        ml={3}
         aria-label="downvote"
         icon={<ChevronDownIcon />}
         isLoading={loading === "loading-Down"}
-        colorScheme={post.voteStatus === -1 ? "red" : undefined}
+        colorScheme={
+          post.voteStatus === -1
+            ? "red"
+            : post.voteStatus === 1
+            ? undefined
+            : "teal"
+        }
         onClick={async () => {
           if (post.voteStatus === -1) {
             return;
