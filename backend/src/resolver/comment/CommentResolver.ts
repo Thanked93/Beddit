@@ -12,6 +12,8 @@ import { MyContext } from "../../types";
 
 import { getConnection } from "typeorm";
 import { Comment } from "../../entities/Comment";
+import { CommentResponse } from "./types/CommentResponse";
+import { valdiateComment } from "./validation/validateComment";
 
 @Resolver()
 export class CommentResolver {
@@ -23,15 +25,17 @@ export class CommentResolver {
     return comments;
   }
 
-  @Mutation(() => Comment, { nullable: true })
+  @Mutation(() => CommentResponse, { nullable: true })
   async createComment(
     @Arg("postId", () => Int, { nullable: true }) postId: number,
     @Arg("CommentId", () => Int, { nullable: true }) commentId: number,
     @Arg("text") text: string,
     @Ctx() { req }: MyContext
-  ) {
-    console.log(text);
-    let userId = 1;
+  ): Promise<CommentResponse> {
+    const errors = valdiateComment(text);
+    if (errors) return { errors };
+    let userId = req.session.userId;
+
     const comment = await getConnection()
       .createQueryBuilder()
       .insert()
@@ -43,6 +47,6 @@ export class CommentResolver {
       })
       .returning("*")
       .execute();
-    return comment.raw[0];
+    return { comment: comment.raw[0] };
   }
 }

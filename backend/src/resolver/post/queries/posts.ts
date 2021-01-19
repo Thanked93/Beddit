@@ -1,4 +1,3 @@
-import { Post } from "../../../entities/Post";
 import { getConnection } from "typeorm";
 import { PaginatedPost } from "../types/PaginatedPost";
 
