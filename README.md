@@ -1,20 +1,43 @@
 # Beddit
-Reddit Clone
 
-##Backend
-  ### Express
-  ### Typeorm
-  ### postgres
-  ### Redis (For session storage only)
-  ### Graphql
-  
-##Frontend
-  ###Nextjs template with chakra-ui
-  ###Apollo
-  
-## User Story
+## Forum which allows Users to write a post and comment on there favorite topics.
 
-### Authentication
-A User is able to register an account and login. After login the user is able to create posts or comment on posts.
+## Features / Roadmap
 
-A User is able to use the crud operations for posts and comments
+### [X] Register
+
+### [X] Login
+
+(x) via email or username
+
+### [X] Logout
+
+### [X] Authentication => http Cookie
+
+### [X] Caching
+
+### [X] Post
+
+(X) crud operations
+(X) comment
+(X) upvote/downvote
+(X) Pagination
+() Sorting by upvote/downvote/date
+
+### [] Comment
+
+(X) comment the comment
+(X) crud operations
+() upvote(downvote)
+
+### [X] Password forgotten
+
+(X) send token to email
+(X) reset Password based on url
+
+### [X] Saving to database
+
+(X) User
+(X) Post
+(X) Vote
+(X) Comment
