@@ -1,0 +1,11 @@
+fragment RegularCommentChildren on Comment {
+  children {
+    id
+    text
+    updatedAt
+    creator {
+      id
+      username
+    }
+  }
+}

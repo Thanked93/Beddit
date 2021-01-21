@@ -1,24 +1,18 @@
-import React, { useState, useRef } from "react";
-import { Box, Link, Flex, Button, Heading } from "@chakra-ui/react";
-import NextLink from "next/link";
+import { useApolloClient } from "@apollo/client";
+import { Box, Button, Flex, Heading, Link } from "@chakra-ui/react";
+import { default as NavLink, default as NextLink } from "next/link";
+import { useRouter } from "next/router";
+import React from "react";
 import { useLogoutMutation, useMeQuery } from "../generated/graphql";
 import { isServer } from "../utils/isServer";
-import { useRouter } from "next/router";
-import { useApolloClient } from "@apollo/client";
 import { hocApollo } from "../utils/myapollo";
-import CreatePost from "./modal/CreatePost";
 
 export const NavBar = () => {
-  const [showModal, setShowModal] = useState<boolean>(false);
   const [logout, { loading: logoutloading }] = useLogoutMutation();
   const apolloClient = useApolloClient();
   const { data, loading } = useMeQuery({
     skip: isServer(),
   });
-
-  const toggleModal = () => {
-    setShowModal((prev) => !prev);
-  };
 
   let body = <></>;
   if (loading) {
@@ -36,12 +30,12 @@ export const NavBar = () => {
   } else {
     body = (
       <Flex ml="auto" align="center">
-        <Button mx="auto" onClick={toggleModal}>
-          Create Post
-        </Button>
-        <Box>{!showModal ? null : <CreatePost closeModal={toggleModal} />}</Box>
-        <Box mr={2}>Hello {data.me.username}</Box>
+        <NavLink href="/post/create">
+          <Button>Create Post</Button>
+        </NavLink>
         <Button
+          ml={3}
+          mr={8}
           variant="link"
           isLoading={logoutloading}
           onClick={async () => {
@@ -56,14 +50,11 @@ export const NavBar = () => {
   }
 
   return (
-    <Flex zIndex={1} position="sticky" top={0} bg="#8a948d" p={4}>
-      <Flex flex={1} m="auto" maxW={800} align="center">
+    <Flex zIndex={1} position="sticky" top={0} bg="#8a948d" p={"5vmin"}>
+      <Flex flex={1} m="auto" minW={320} maxW={800} align="center">
         <NextLink href="/">
-          <Link>
-            <Heading>Beddit</Heading>
-          </Link>
+          <Heading as={Link}>Beddit</Heading>
         </NextLink>
-
         {body}
       </Flex>
     </Flex>

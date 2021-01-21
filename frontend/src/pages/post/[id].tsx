@@ -1,14 +1,17 @@
-import { Box, Heading, Stack } from "@chakra-ui/react";
+import { Box, Flex, Heading } from "@chakra-ui/react";
 import React from "react";
-import ButtonPair from "../../components/ButtonPair";
-import Layout from "../../components/Layout";
-import { useCommentQuery, useSinglePostQuery } from "../../generated/graphql";
+import CommentRoot from "../../components/CommentView/CommentRoot";
+import ButtonContainer from "../../components/customButtons/ButtonContainer";
+import ItemWrapper from "../../components/layout/ItemWrapper";
+import Layout from "../../components/layout/Layout";
+import NotFoundError from "../../components/NotFoundError";
+import { useMeQuery, useSinglePostQuery } from "../../generated/graphql";
 import { hocApollo } from "../../utils/myapollo";
 import { UseIdFromUrl } from "../../utils/useIdFromUrl";
-import CommentView from "../../components/CommentView";
 
 export const Post = ({}) => {
   const singlePostId = UseIdFromUrl();
+  const { data: meData } = useMeQuery();
   const { data, loading } = useSinglePostQuery({
     skip: singlePostId === -1,
     variables: {
@@ -24,22 +27,29 @@ export const Post = ({}) => {
     );
   }
   if (!data.singlePost) {
-    return (
-      <Layout>
-        <Box>The requested Post could not be found.</Box>
-      </Layout>
-    );
+    return <NotFoundError />;
   }
 
   return (
     <Layout>
-      <Heading mb={4}>{data.singlePost.title}</Heading>
-      {data.singlePost.text}
-      <ButtonPair
-        id={data.singlePost.id}
-        creatorId={data.singlePost.creator.id}
+      <ItemWrapper>
+        <Flex flexDirection="column" mx={8}>
+          <Heading mb={4}>{data.singlePost.title}</Heading>
+          {data.singlePost.text}
+          <Flex alignContent="flex-end">
+            <ButtonContainer
+              id={data.singlePost.id}
+              creatorId={data.singlePost.creator.id}
+              isPost={true}
+              userId={meData?.me ? meData.me.id : -1}
+            />
+          </Flex>
+        </Flex>
+      </ItemWrapper>
+      <CommentRoot
+        postId={singlePostId}
+        userId={meData?.me ? meData.me.id : -1}
       />
-      <CommentView singlePostId={singlePostId} />
     </Layout>
   );
 };

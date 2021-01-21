@@ -4,8 +4,8 @@ import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
 import InputField from "../components/InputField";
-import Layout from "../components/Layout";
-import Wrapper from "../components/Wrapper";
+import ItemWrapper from "../components/layout/ItemWrapper";
+import Layout from "../components/layout/Layout";
 import { MeDocument, MeQuery, useLoginMutation } from "../generated/graphql";
 import { hocApollo } from "../utils/myapollo";
 import { toErrorMap } from "../utils/toErrorMap";
@@ -14,7 +14,7 @@ export const Login: React.FC<{}> = ({}) => {
   const router = useRouter();
   return (
     <Layout>
-      <Wrapper variant="regular">
+      <ItemWrapper>
         <Formik
           initialValues={{ usernameOrEmail: "", password: "" }}
           onSubmit={async (values, { setErrors }) => {
@@ -48,6 +48,7 @@ export const Login: React.FC<{}> = ({}) => {
                 name="usernameOrEmail"
                 placeholder="username or email"
                 label="Username or Email"
+                size={5}
               />
               <Box mt={4}>
                 <InputField
@@ -55,23 +56,33 @@ export const Login: React.FC<{}> = ({}) => {
                   placeholder="password"
                   label="Password"
                   type="password"
+                  size={5}
                 />
               </Box>
               <Flex mt={2}>
                 <Box>
                   <NextLink href="/forgot-password">
-                    <Link ml="auto">forgot password?</Link>
+                    <Link color="blue" ml="auto">
+                      forgot password?
+                    </Link>
                   </NextLink>
                 </Box>
               </Flex>
-              <Button mt={6} type="submit" isLoading={isSubmitting}>
-                {" "}
-                login{" "}
-              </Button>
+              <Flex justifyContent="center">
+                <Button
+                  mt={6}
+                  type="submit"
+                  colorScheme={"green"}
+                  isLoading={isSubmitting}
+                >
+                  {" "}
+                  login{" "}
+                </Button>
+              </Flex>
             </Form>
           )}
         </Formik>
-      </Wrapper>
+      </ItemWrapper>
     </Layout>
   );
 };

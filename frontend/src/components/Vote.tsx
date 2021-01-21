@@ -20,9 +20,11 @@ import {
 import { hocApollo } from "../utils/myapollo";
 import gql from "graphql-tag";
 import { ApolloCache } from "@apollo/client";
+import { useIsAuth } from "../utils/useIsAuth";
 
 interface VoteProps {
   post: PostSnippetFragment;
+  userId: number;
 }
 
 const updateAfterVote = (
@@ -63,7 +65,7 @@ const updateAfterVote = (
   }
 };
 
-export const Vote: React.FC<VoteProps> = ({ post }) => {
+export const Vote: React.FC<VoteProps> = ({ post, userId }) => {
   const [vote] = useVoteMutation();
   const [loading, setLoading] = useState<
     "loading-Up" | "loading-Down" | "not-loading"
@@ -73,18 +75,13 @@ export const Vote: React.FC<VoteProps> = ({ post }) => {
       <IconButton
         ml={2}
         mr={3}
-        colorScheme={
-          post.voteStatus === 1
-            ? "green"
-            : post.voteStatus === -1
-            ? undefined
-            : "teal"
-        }
+        colorScheme={post.voteStatus === 1 ? "green" : undefined}
         aria-label="upvote"
         icon={<ChevronUpIcon />}
         isLoading={loading === "loading-Up"}
+        disabled={userId === -1}
         onClick={async () => {
-          if (post.voteStatus === 1) {
+          if (post.voteStatus === 1 || userId === -1) {
             return;
           }
           setLoading("loading-Up");
@@ -105,15 +102,10 @@ export const Vote: React.FC<VoteProps> = ({ post }) => {
         aria-label="downvote"
         icon={<ChevronDownIcon />}
         isLoading={loading === "loading-Down"}
-        colorScheme={
-          post.voteStatus === -1
-            ? "red"
-            : post.voteStatus === 1
-            ? undefined
-            : "teal"
-        }
+        colorScheme={post.voteStatus === -1 ? "red" : undefined}
+        disabled={userId === -1}
         onClick={async () => {
-          if (post.voteStatus === -1) {
+          if (post.voteStatus === -1 || userId === -1) {
             return;
           }
           setLoading("loading-Down");

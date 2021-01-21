@@ -80,14 +80,14 @@ export class PostResolver {
     return await createPost(input, req);
   }
 
-  @Mutation(() => Post, { nullable: true })
+  @Mutation(() => PostResponse)
   @UseMiddleware(isAuth)
   async updatePost(
     @Arg("id", () => Int) id: number,
     @Arg("title") title: string,
     @Arg("text") text: string,
     @Ctx() { req }: MyContext
-  ): Promise<Post | null> {
+  ): Promise<PostResponse> {
     return await updatePost(id, title, text, req);
   }
 

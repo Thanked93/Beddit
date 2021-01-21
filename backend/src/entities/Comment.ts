@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -35,12 +36,26 @@ export class Comment extends BaseEntity {
   updatedAt = Date;
 
   @Field()
-  @Column()
+  @Column({ nullable: true })
   postId: number;
 
-  @ManyToOne(() => User, (user) => user.comment)
+  @ManyToOne(() => User, (user) => user.comment, { onDelete: "CASCADE" })
   creator: User;
 
-  @ManyToOne(() => Post, (post) => post.comments)
+  @ManyToOne(() => Post, (post) => post.comments, { onDelete: "CASCADE" })
   post: Post;
+
+  @ManyToOne(() => Comment, (comment) => comment.children, {
+    nullable: true,
+    onDelete: "CASCADE",
+  })
+  parent: Comment;
+
+  @Field()
+  @Column({ nullable: true })
+  parentId: number;
+
+  @Field(() => [Comment], { nullable: true })
+  @OneToMany(() => Comment, (comment) => comment.parent, { nullable: true })
+  children: Comment[];
 }

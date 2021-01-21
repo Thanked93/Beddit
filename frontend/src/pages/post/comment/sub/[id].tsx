@@ -2,28 +2,26 @@ import { Box, Button, Flex, Heading, Text } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { useRouter } from "next/router";
 import React from "react";
-import InputField from "../../../components/InputField";
-import Layout from "../../../components/layout/Layout";
-import NotFoundError from "../../../components/NotFoundError";
-import {
-  useCreateCommentMutation,
-  useSinglePostQuery,
-} from "../../../generated/graphql";
-import { hocApollo } from "../../../utils/myapollo";
-import { toErrorMap } from "../../../utils/toErrorMap";
-import { UseIdFromUrl } from "../../../utils/useIdFromUrl";
-import { useIsAuth } from "../../../utils/useIsAuth";
+import { useCommentQuery } from "../../../../generated/graphql";
+import InputField from "../../../../components/InputField";
+import Layout from "../../../../components/layout/Layout";
+import NotFoundError from "../../../../components/NotFoundError";
+import { useCreateCommentMutation } from "../../../../generated/graphql";
+import { hocApollo } from "../../../../utils/myapollo";
+import { toErrorMap } from "../../../../utils/toErrorMap";
+import { UseIdFromUrl } from "../../../../utils/useIdFromUrl";
+import { useIsAuth } from "../../../../utils/useIsAuth";
 
 interface createCommentProps {}
 
 export const CreateComment: React.FC<createCommentProps> = () => {
   const [createComment] = useCreateCommentMutation();
-  const postId = UseIdFromUrl();
+  const commentId = UseIdFromUrl();
   const router = useRouter();
-  const { data, loading } = useSinglePostQuery({
-    skip: postId === -1,
+  const { data, loading } = useCommentQuery({
+    skip: commentId === -1,
     variables: {
-      id: postId,
+      id: commentId,
     },
   });
 
@@ -37,7 +35,7 @@ export const CreateComment: React.FC<createCommentProps> = () => {
     );
   }
 
-  if (!data?.singlePost) {
+  if (!data?.comment) {
     return <NotFoundError />;
   }
 
@@ -57,20 +55,20 @@ export const CreateComment: React.FC<createCommentProps> = () => {
           justifyContent="center"
         >
           <Box mx="5vmin" my={"3vmin"}>
-            <Heading>{data.singlePost.title}</Heading>
-            <Box mt={5}>{data.singlePost.text}</Box>
+            <Box mt={5}>{data.comment.text}</Box>
 
             <Formik
               initialValues={{ text: "" }}
               onSubmit={async ({ text }, { setErrors }) => {
                 const response = await createComment({
-                  variables: { postId, text },
-                  update: (cache) => cache.evict({ fieldName: "comment" }),
+                  variables: { commentId, text },
+                  update: (cache) => cache.evict({ fieldName: "comments" }),
                 });
 
                 if (response.data.createComment?.errors) {
                   setErrors(toErrorMap(response.data.createComment.errors));
                 } else {
+                  console.log("here");
                   router.back();
                 }
               }}

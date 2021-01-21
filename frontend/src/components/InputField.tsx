@@ -30,16 +30,17 @@ export const InputField: React.FC<InputFieldProps> = ({
 
   return (
     <FormControl isInvalid={!!error}>
-      <FormLabel fontSize={`${size * 0.8}vmin`} htmlFor={field.name}>
+      <FormLabel fontSize={`${size * 0.5}vmin`} htmlFor={field.name}>
         {label}
       </FormLabel>
       <InputOrTextarea
         {...field}
         {...props}
+        whiteSpace="pre"
         id={field.name}
         placeholder={props.placeholder}
         width={`${size * 10}vw`}
-        height={"4vmin"}
+        height={isTextarea ? size * 10 : undefined}
       />
       {error && <FormErrorMessage>{error}</FormErrorMessage>}
     </FormControl>

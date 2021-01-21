@@ -1,0 +1,5 @@
+mutation UpdateComment($commentId: Int!, $text: String!) {
+  updateComment(commentId: $commentId, text: $text) {
+    ...RegularCommentResponse
+  }
+}

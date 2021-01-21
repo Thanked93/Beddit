@@ -1,5 +1,5 @@
-query Comment($postId: Int!) {
-  comment(postId: $postId) {
-    ...RegularComment
+query Comments($postId: Int, $commentId: Int) {
+  comments(postId: $postId, commentId: $commentId) {
+    id
   }
 }

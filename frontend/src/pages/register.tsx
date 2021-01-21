@@ -1,10 +1,10 @@
-import { Box, Button } from "@chakra-ui/react";
+import { Box, Button, Flex } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { useRouter } from "next/router";
 import React from "react";
 import InputField from "../components/InputField";
-import Layout from "../components/Layout";
-import Wrapper from "../components/Wrapper";
+import ItemWrapper from "../components/layout/ItemWrapper";
+import Layout from "../components/layout/Layout";
 import { MeDocument, MeQuery, useRegisterMutation } from "../generated/graphql";
 import { hocApollo } from "../utils/myapollo";
 import { toErrorMap } from "../utils/toErrorMap";
@@ -16,7 +16,7 @@ export const Register: React.FC<registerProps> = ({}) => {
   const router = useRouter();
   return (
     <Layout>
-      <Wrapper variant="regular">
+      <ItemWrapper>
         <Formik
           initialValues={{ email: "", username: "", password: "" }}
           onSubmit={async (values, { setErrors }) => {
@@ -57,14 +57,21 @@ export const Register: React.FC<registerProps> = ({}) => {
                   type="password"
                 />
               </Box>
-              <Button mt={6} type="submit" isLoading={isSubmitting}>
-                {" "}
-                register{" "}
-              </Button>
+              <Flex justifyContent="center">
+                <Button
+                  colorScheme={"green"}
+                  mt={6}
+                  type="submit"
+                  isLoading={isSubmitting}
+                >
+                  {" "}
+                  register{" "}
+                </Button>
+              </Flex>
             </Form>
           )}
         </Formik>
-      </Wrapper>
+      </ItemWrapper>
     </Layout>
   );
 };

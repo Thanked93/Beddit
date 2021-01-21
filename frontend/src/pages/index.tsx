@@ -9,10 +9,11 @@ import {
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import React from "react";
-import ButtonPair from "../components/ButtonPair";
-import Layout from "../components/Layout";
+import ButtonContainer from "../components/customButtons/ButtonContainer";
+import Layout from "../components/layout/Layout";
+import NotFoundError from "../components/NotFoundError";
 import Vote from "../components/Vote";
-import { usePostsQuery } from "../generated/graphql";
+import { useMeQuery, usePostsQuery } from "../generated/graphql";
 import { hocApollo } from "../utils/myapollo";
 
 const Index = () => {
@@ -21,14 +22,10 @@ const Index = () => {
     notifyOnNetworkStatusChange: true,
   });
 
+  const { data: meData } = useMeQuery();
+
   if (!loading && !data) {
-    return (
-      <Flex>
-        <Box>
-          <Heading fontSize="l">Something went Wrong...</Heading>
-        </Box>
-      </Flex>
-    );
+    return <NotFoundError />;
   }
 
   return (
@@ -47,15 +44,20 @@ const Index = () => {
                     </Link>
                   </NextLink>
                   <Text ml={2} fontSize={15}>
-                    posted By {post.creator.username}
+                    by {post.creator.username}
                   </Text>
 
-                  <Vote post={post} />
+                  <Vote post={post} userId={meData?.me ? meData.me.id : -1} />
                 </Flex>
                 <Flex mt={3} align="center">
                   <Text>{post.textSnippet}...</Text>
                   <Box ml="auto" right={0}>
-                    <ButtonPair id={post.id} creatorId={post.creator.id} />
+                    <ButtonContainer
+                      id={post.id}
+                      creatorId={post.creator.id}
+                      isPost={true}
+                      userId={meData?.me ? meData.me.id : -1}
+                    />
                   </Box>
                 </Flex>
               </Box>
