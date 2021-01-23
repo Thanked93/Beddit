@@ -41,12 +41,12 @@ export const createPost: React.FC<createPostProps> = ({}) => {
                   name="title"
                   placeholder="title"
                   label="Title"
-                  size={5}
+                  size={3}
                 />
               </Box>
               <Box mt={4}>
                 <InputField
-                  size={5}
+                  size={3}
                   isTextarea
                   name="text"
                   placeholder="text..."

@@ -2,6 +2,8 @@ fragment RegularComment on Comment {
   id
   text
   updatedAt
+  voteStatus
+  points
   creator {
     id
     username

@@ -1,5 +1,7 @@
 import { DeleteIcon } from "@chakra-ui/icons";
 import { IconButton } from "@chakra-ui/react";
+import { Router } from "express";
+import { useRouter } from "next/router";
 import React from "react";
 import {
   useDeleteCommentMutation,
@@ -17,11 +19,13 @@ export const DeleteButton: React.FC<DeleteButtonProps> = ({ isPost, id }) => {
     ? useDeletePostMutation()
     : useDeleteCommentMutation();
 
+  const router = useRouter();
   // if the user does not own the post he cannot delete
 
   return (
     <IconButton
       aria-label="delete Item"
+      size={"sm"}
       icon={<DeleteIcon />}
       onClick={() => {
         deleteItem({
@@ -30,6 +34,7 @@ export const DeleteButton: React.FC<DeleteButtonProps> = ({ isPost, id }) => {
             cache.evict({ id: `${isPost ? "Post:" : "Comment:"}` + id });
           },
         });
+        isPost ? router.push("/") : null;
       }}
     ></IconButton>
   );

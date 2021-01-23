@@ -1,35 +1,27 @@
+import { ApolloCache } from "@apollo/client";
+import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
+import { Box, Flex, IconButton } from "@chakra-ui/react";
+import gql from "graphql-tag";
 import React, { useState } from "react";
 import {
-  Link,
-  Stack,
-  Box,
-  Heading,
-  Text,
-  Flex,
-  Button,
-  IconButton,
-  Icon,
-} from "@chakra-ui/react";
-import { ChevronUpIcon, ChevronDownIcon } from "@chakra-ui/icons";
-import {
+  Comment,
   PostSnippetFragment,
+  useVoteCommentMutation,
   useVoteMutation,
   VoteMutation,
-  VoteMutationVariables,
 } from "../generated/graphql";
 import { hocApollo } from "../utils/myapollo";
-import gql from "graphql-tag";
-import { ApolloCache } from "@apollo/client";
-import { useIsAuth } from "../utils/useIsAuth";
 
 interface VoteProps {
   post: PostSnippetFragment;
+  comment: Comment;
   userId: number;
 }
 
 const updateAfterVote = (
   value: number,
-  postId: number,
+  isPost: boolean,
+  id: number,
   cache: ApolloCache<VoteMutation>
 ) => {
   const data = cache.readFragment<{
@@ -37,14 +29,22 @@ const updateAfterVote = (
     points: number;
     voteStatus: number | null;
   }>({
-    id: "Post:" + postId,
-    fragment: gql`
-      fragment _ on Post {
-        id
-        points
-        voteStatus
-      }
-    `,
+    id: isPost ? "Post:" + id : "Comment:" + id,
+    fragment: isPost
+      ? gql`
+          fragment _ on Post {
+            id
+            points
+            voteStatus
+          }
+        `
+      : gql`
+          fragment _ on Comment {
+            id
+            points
+            voteStatus
+          }
+        `,
   });
   if (data) {
     if (data.voteStatus === value) {
@@ -53,69 +53,99 @@ const updateAfterVote = (
     const newPoints =
       (data.points as number) + (!data.voteStatus ? 1 : 2) * value;
     cache.writeFragment({
-      id: "Post:" + postId,
-      fragment: gql`
-        fragment __ on Post {
-          points
-          voteStatus
-        }
-      `,
-      data: { id: postId, points: newPoints, voteStatus: value } as any,
+      id: isPost ? "Post:" + id : "Comment:" + id,
+
+      fragment: isPost
+        ? gql`
+            fragment __ on Post {
+              points
+              voteStatus
+            }
+          `
+        : gql`
+            fragment __ on Comment {
+              points
+              voteStatus
+            }
+          `,
+      data: { id: id, points: newPoints, voteStatus: value } as any,
     });
   }
 };
 
-export const Vote: React.FC<VoteProps> = ({ post, userId }) => {
-  const [vote] = useVoteMutation();
+export const Vote: React.FC<VoteProps> = ({ post, userId, comment }) => {
+  const [vote] = post ? useVoteMutation() : useVoteCommentMutation();
   const [loading, setLoading] = useState<
     "loading-Up" | "loading-Down" | "not-loading"
   >("not-loading");
+
   return (
     <Flex ml="auto" right={0} justifyContent="center" alignItems="center">
       <IconButton
         ml={2}
+        size="sm"
         mr={3}
-        colorScheme={post.voteStatus === 1 ? "green" : undefined}
+        colorScheme={colored(1, post, comment) ? "green" : undefined}
         aria-label="upvote"
         icon={<ChevronUpIcon />}
         isLoading={loading === "loading-Up"}
         disabled={userId === -1}
         onClick={async () => {
-          if (post.voteStatus === 1 || userId === -1) {
+          if (
+            post
+              ? post.voteStatus === 1
+              : comment.voteStatus === 1 || userId === -1
+          ) {
             return;
           }
           setLoading("loading-Up");
           await vote({
             variables: {
-              postId: post.id,
+              id: post ? post.id : comment.id,
               value: 1,
             },
-            update: (cache) => updateAfterVote(1, post.id, cache),
+            update: (cache) =>
+              updateAfterVote(
+                1,
+                post ? true : false,
+                post ? post.id : comment.id,
+                cache
+              ),
           });
 
           setLoading("not-loading");
         }}
       />
-      <Box fontSize="xl">{post.points}</Box>
+      <Box fontSize="l">{post ? post.points : comment.points}</Box>
       <IconButton
         ml={3}
+        size="sm"
         aria-label="downvote"
         icon={<ChevronDownIcon />}
         isLoading={loading === "loading-Down"}
-        colorScheme={post.voteStatus === -1 ? "red" : undefined}
+        colorScheme={colored(-1, post, comment) ? "red" : undefined}
         disabled={userId === -1}
         onClick={async () => {
-          if (post.voteStatus === -1 || userId === -1) {
+          if (
+            post
+              ? post.voteStatus === -1
+              : comment.voteStatus === -1 || userId === -1
+          ) {
             return;
           }
           setLoading("loading-Down");
           await vote({
             variables: {
-              postId: post.id,
+              id: post ? post.id : comment.id,
               value: -1,
             },
             update: (cache) => {
-              updateAfterVote(-1, post.id, cache);
+              updateAfterVote(
+                -1,
+                post ? true : false,
+                post ? post.id : comment.id,
+                cache
+              );
             },
           });
           setLoading("not-loading");
@@ -126,3 +156,14 @@ export const Vote: React.FC<VoteProps> = ({ post, userId }) => {
 };
 
 export default hocApollo({ ssr: false })(Vote);
+
+const colored = (
+  num: number,
+  post?: PostSnippetFragment,
+  comment?: Comment
+) => {
+  if (post) {
+    return post.voteStatus === num;
+  }
+  return comment?.voteStatus === num;
+};

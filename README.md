@@ -1,6 +1,6 @@
 # Beddit
 
-## Forum which allows Users to write a post and comment on there favorite topics.
+### Forum which allows Users to write a post and comment on there favorite topics.
 
 ## Features / Roadmap
 
@@ -18,26 +18,31 @@
 
 ### [X] Post
 
-(X) crud operations
-(X) comment
-(X) upvote/downvote
-(X) Pagination
-() Sorting by upvote/downvote/date
+(X) crud operations\
+(X) comment\
+(X) upvote/downvote\
+(X) Pagination\
+() Sorting by upvote/downvote/date\
 
-### [] Comment
+### [X] Comment
 
-(X) comment the comment
-(X) crud operations
-() upvote(downvote)
+(X) comment the comment\
+(X) crud operations\
+(X) upvote(downvote)\
 
 ### [X] Password forgotten
 
-(X) send token to email
-(X) reset Password based on url
+(X) send token to email\
+(X) reset Password based on url\
 
 ### [X] Saving to database
 
-(X) User
-(X) Post
-(X) Vote
-(X) Comment
+(X) User\
+(X) Post\
+(X) Vote\
+(X) Comment\
+
+### [X] Layout
+
+(X) responsive
+() theming

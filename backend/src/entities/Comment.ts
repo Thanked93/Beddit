@@ -10,6 +10,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { Post } from "./Post";
+import { Vote } from "./Vote";
 import { User } from "./User";
 
 @ObjectType()
@@ -36,6 +37,10 @@ export class Comment extends BaseEntity {
   updatedAt = Date;
 
   @Field()
+  @Column({ type: "int", default: 0 })
+  points!: number;
+
+  @Field()
   @Column({ nullable: true })
   postId: number;
 
@@ -58,4 +63,8 @@ export class Comment extends BaseEntity {
   @Field(() => [Comment], { nullable: true })
   @OneToMany(() => Comment, (comment) => comment.parent, { nullable: true })
   children: Comment[];
+
+  @Field(() => [Vote], { nullable: true })
+  @OneToMany(() => Vote, (vote) => vote.comment)
+  votes: Vote[];
 }

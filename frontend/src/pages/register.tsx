@@ -1,4 +1,4 @@
-import { Box, Button, Flex } from "@chakra-ui/react";
+import { Box, Text, Button, Flex, Link } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { useRouter } from "next/router";
 import React from "react";
@@ -8,6 +8,7 @@ import Layout from "../components/layout/Layout";
 import { MeDocument, MeQuery, useRegisterMutation } from "../generated/graphql";
 import { hocApollo } from "../utils/myapollo";
 import { toErrorMap } from "../utils/toErrorMap";
+import NextLink from "next/link";
 
 interface registerProps {}
 
@@ -45,9 +46,15 @@ export const Register: React.FC<registerProps> = ({}) => {
                 name="username"
                 placeholder="username"
                 label="Username"
+                size={3}
               />
               <Box mt={4}>
-                <InputField name="email" placeholder="email" label="email" />
+                <InputField
+                  name="email"
+                  placeholder="email"
+                  label="email"
+                  size={3}
+                />
               </Box>
               <Box mt={4}>
                 <InputField
@@ -55,8 +62,17 @@ export const Register: React.FC<registerProps> = ({}) => {
                   placeholder="password"
                   label="Password"
                   type="password"
+                  size={3}
                 />
               </Box>
+              <Flex flexDirection="row" mt="2">
+                <Text>{"Already have an account? "}</Text>
+                <NextLink href="/Register">
+                  <Link ml="1" fontWeight="600">
+                    Login
+                  </Link>
+                </NextLink>
+              </Flex>
               <Flex justifyContent="center">
                 <Button
                   colorScheme={"green"}
@@ -65,7 +81,7 @@ export const Register: React.FC<registerProps> = ({}) => {
                   isLoading={isSubmitting}
                 >
                   {" "}
-                  register{" "}
+                  Register{" "}
                 </Button>
               </Flex>
             </Form>

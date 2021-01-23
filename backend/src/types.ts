@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import session from "express-session";
 import { Redis } from "ioredis";
-import { createUpvoteLoader } from "./utils/createUpvoteLoader";
+import { createVoteLoader } from "./utils/createVoteLoader";
 import { createUserLoader } from "./utils/createUserLoader";
 
 export type MyContext = {
@@ -9,7 +9,7 @@ export type MyContext = {
   res: Response;
   redis: Redis;
   userLoader: ReturnType<typeof createUserLoader>;
-  upvoteLoader: ReturnType<typeof createUpvoteLoader>;
+  voteLoader: ReturnType<typeof createVoteLoader>;
 };
 
 export type Req = Request & { session: session.Session & { userId?: number } };

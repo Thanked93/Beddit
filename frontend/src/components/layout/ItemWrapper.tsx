@@ -1,9 +1,12 @@
 import React from "react";
-import { Box, Flex } from "@chakra-ui/react";
+import { IconButton, Box, Flex } from "@chakra-ui/react";
+import { CloseIcon } from "@chakra-ui/icons";
+import { useRouter } from "next/router";
 
 interface ItemWrapperProps {}
 
 export const ItemWrapper: React.FC<ItemWrapperProps> = ({ children }) => {
+  const router = useRouter();
   return (
     <Flex justifyContent="center">
       <Flex
@@ -18,6 +21,13 @@ export const ItemWrapper: React.FC<ItemWrapperProps> = ({ children }) => {
         flexDirection="column"
         justifyContent="center"
       >
+        <Flex ml="auto" mr="4vmin" mt="5">
+          <IconButton
+            aria-label="go  back"
+            icon={<CloseIcon />}
+            onClick={() => router.back()}
+          />
+        </Flex>
         <Flex mx="auto" my={5} justifyContent="center">
           {children}
         </Flex>

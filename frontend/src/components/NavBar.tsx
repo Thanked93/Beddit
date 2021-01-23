@@ -50,7 +50,7 @@ export const NavBar = () => {
   }
 
   return (
-    <Flex zIndex={1} position="sticky" top={0} bg="#8a948d" p={"5vmin"}>
+    <Flex zIndex={1} position="sticky" top={0} bg="#8a948d" p={"3vmin"}>
       <Flex flex={1} m="auto" minW={320} maxW={800} align="center">
         <NextLink href="/">
           <Heading as={Link}>Beddit</Heading>

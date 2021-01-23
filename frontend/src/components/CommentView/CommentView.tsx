@@ -1,20 +1,23 @@
-import { Box, Flex, Text, VStack } from "@chakra-ui/react";
+import { Box, Flex, StackDivider, Text, VStack } from "@chakra-ui/react";
 import React from "react";
 import { useCommentQuery, useCommentsQuery } from "../../generated/graphql";
 import { hocApollo } from "../../utils/myapollo";
 import ButtonContainer from "../customButtons/ButtonContainer";
 import NotFoundError from "../NotFoundError";
+import Vote from "../Vote";
 
 interface CommentViewProps {
   id: number;
   userId: number;
   depth: number;
+  idx?: number;
 }
 
 export const CommentView: React.FC<CommentViewProps> = ({
   id,
   userId,
   depth,
+  idx,
 }) => {
   const { data } = useCommentQuery({
     variables: {
@@ -27,28 +30,45 @@ export const CommentView: React.FC<CommentViewProps> = ({
   }
 
   return (
-    <Box ml={Math.min(depth * 5, 50)}>
-      <Box left={0} top={10}>
-        <Text>posted by {data.comment.creator.username}</Text>
-      </Box>
-      <Box>{data.comment.text}</Box>
-      <ButtonContainer
-        userId={userId}
-        creatorId={data.comment.creator.id}
-        id={data.comment.id}
-        isPost={false}
-      />
-      {data.comment.children.map(({ id: childId }) => {
-        return (
-          <CommentView
-            key={`child-${childId}`}
-            id={childId}
+    <Flex mt="2" ml={depth * 0.2 * 5} flexDirection="column">
+      <Box bg={(idx ? idx : depth) % 2 === 1 ? "rgb(240,240,240)" : "white"}>
+        <Box>
+          <Text fontSize="sm">posted by {data.comment.creator.username}</Text>
+          <Vote comment={data.comment} userId={userId} />
+        </Box>
+        <Flex mt="3">
+          <Text mx={1}>{data.comment.text}</Text>
+        </Flex>
+        <Flex paddingBottom={1} mr={1} justifyContent="flex-end">
+          <ButtonContainer
             userId={userId}
-            depth={depth + 1}
+            creatorId={data.comment.creator.id}
+            id={data.comment.id}
+            isPost={false}
           />
+        </Flex>
+      </Box>
+
+      {data.comment.children.map(({ id: childId }, idx: number) => {
+        return (
+          <VStack
+            divider={<StackDivider borderColor="green.4000" />}
+            spacing={3}
+            align="stretch"
+          >
+            <Box>
+              <CommentView
+                key={`comment-child-${childId}`}
+                id={childId}
+                userId={userId}
+                depth={depth + 1}
+                idx={idx + depth + 1}
+              />
+            </Box>
+          </VStack>
         );
       })}
-    </Box>
+    </Flex>
   );
 };
 

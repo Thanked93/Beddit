@@ -10,7 +10,7 @@ import {
 } from "typeorm";
 import { Field, Int, ObjectType } from "type-graphql";
 import { User } from "./User";
-import { Upvote } from "./Upvote";
+import { Vote } from "./Vote";
 import { Comment } from "./Comment";
 
 @ObjectType()
@@ -51,8 +51,8 @@ export class Post extends BaseEntity {
   @ManyToOne(() => User, (user) => user.posts)
   creator: User;
 
-  @OneToMany(() => Upvote, (upvote) => upvote.user)
-  upvote: Upvote[];
+  @OneToMany(() => Vote, (vote) => vote.user)
+  upvote: Vote[];
 
   @Field(() => Comment, { nullable: true })
   @OneToMany(() => Comment, (comment) => comment.post)

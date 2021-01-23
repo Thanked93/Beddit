@@ -34,14 +34,11 @@ export class PostResolver {
   }
 
   @FieldResolver(() => Int, { nullable: true })
-  async voteStatus(
-    @Root() post: Post,
-    @Ctx() { upvoteLoader, req }: MyContext
-  ) {
+  async voteStatus(@Root() post: Post, @Ctx() { voteLoader, req }: MyContext) {
     if (!req.session.userId) {
       return null;
     }
-    const vote = await upvoteLoader.load({
+    const vote = await voteLoader.load({
       postId: post.id,
       userId: req.session.userId,
     });
@@ -51,11 +48,11 @@ export class PostResolver {
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
   async vote(
-    @Arg("postId", () => Int) postId: number,
+    @Arg("id", () => Int) id: number,
     @Arg("value", () => Int) value: number,
     @Ctx() { req }: MyContext
   ) {
-    return await vote(postId, value, req);
+    return await vote(id, value, req);
   }
 
   @Query(() => PaginatedPost)

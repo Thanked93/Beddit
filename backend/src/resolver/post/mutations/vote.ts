@@ -1,17 +1,17 @@
-import { Upvote } from "../../../entities/Upvote";
+import { Vote } from "../../../entities/Vote";
 import { getConnection } from "typeorm";
 import { Req } from "../../../types";
 
 export async function vote(id: number, value: number, req: Req) {
   const upvoteValue = value > 0 ? 1 : -1;
   const { userId } = req.session;
-  const upvoteEntry = await Upvote.findOne({ where: { postId: id, userId } });
+  const upvoteEntry = await Vote.findOne({ where: { postId: id, userId } });
 
   if (upvoteEntry && upvoteEntry.score !== upvoteValue) {
     await getConnection().transaction(async (tm) => {
       await tm.query(
         `
-        update upvote
+        update vote
         set score = $1
         where "postId" = $2  and "userId" = $3`,
         [upvoteValue, id, userId]
@@ -30,7 +30,7 @@ export async function vote(id: number, value: number, req: Req) {
     await getConnection().transaction(async (tm) => {
       await tm.query(
         `
-          insert into upvote ("userId", "postId", "score")
+          insert into vote ("userId", "postId", "score")
           values($1, $2, $3)
         `,
         [userId, id, upvoteValue]

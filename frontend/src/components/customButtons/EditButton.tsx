@@ -14,7 +14,12 @@ export const EditButton: React.FC<EditButtonProps> = ({ id, isPost }) => {
       href={isPost ? "/post/edit/[id]" : "/post/comment/edit/[id]"}
       as={isPost ? `/post/edit/${id}` : `/post/comment/edit/${id}`}
     >
-      <IconButton as={Link} aria-label="Edit Post" icon={<EditIcon />} />
+      <IconButton
+        as={Link}
+        aria-label="Edit Post"
+        size={"sm"}
+        icon={<EditIcon />}
+      />
     </NextLink>
   );
 };

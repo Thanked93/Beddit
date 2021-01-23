@@ -1,10 +1,11 @@
-import { Box, Flex, Heading } from "@chakra-ui/react";
+import { Box, Flex, Heading, Text } from "@chakra-ui/react";
 import React from "react";
 import CommentRoot from "../../components/CommentView/CommentRoot";
 import ButtonContainer from "../../components/customButtons/ButtonContainer";
 import ItemWrapper from "../../components/layout/ItemWrapper";
 import Layout from "../../components/layout/Layout";
 import NotFoundError from "../../components/NotFoundError";
+import Vote from "../../components/Vote";
 import { useMeQuery, useSinglePostQuery } from "../../generated/graphql";
 import { hocApollo } from "../../utils/myapollo";
 import { UseIdFromUrl } from "../../utils/useIdFromUrl";
@@ -35,8 +36,16 @@ export const Post = ({}) => {
       <ItemWrapper>
         <Flex flexDirection="column" mx={8}>
           <Heading mb={4}>{data.singlePost.title}</Heading>
-          {data.singlePost.text}
-          <Flex alignContent="flex-end">
+          <Vote
+            post={data.singlePost}
+            userId={meData?.me ? meData.me.id : -1}
+          />
+        </Flex>
+
+        <Text>{data.singlePost.text}</Text>
+        <Flex align="center">
+          <Flex ml={0}>posted by {data.singlePost.creator.username}</Flex>
+          <Flex ml="auto" mr={10}>
             <ButtonContainer
               id={data.singlePost.id}
               creatorId={data.singlePost.creator.id}

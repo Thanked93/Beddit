@@ -9,7 +9,7 @@ import {
 } from "typeorm";
 import { Field, Int, ObjectType } from "type-graphql";
 import { Post } from "./Post";
-import { Upvote } from "./Upvote";
+import { Vote } from "./Vote";
 import { Comment } from "./Comment";
 
 @ObjectType()
@@ -35,8 +35,8 @@ export class User extends BaseEntity {
   @Column({ unique: true })
   email!: string;
 
-  @OneToMany(() => Upvote, (upvote) => upvote.user)
-  upvote: Upvote[];
+  @OneToMany(() => Vote, (vote) => vote.user)
+  votes: Vote[];
 
   @Column()
   password!: string;

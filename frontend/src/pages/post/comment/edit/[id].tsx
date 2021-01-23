@@ -38,22 +38,22 @@ const EditComment = () => {
 
   return (
     <Layout variant="regular">
-      <ItemWrapper>
-        <Formik
-          initialValues={{ text: data.comment.text }}
-          onSubmit={async ({ text }, { setErrors }) => {
-            const response = await updateComment({
-              variables: { commentId, text },
-              update: (cache) => cache.evict({ fieldName: "comments" }),
-            });
-            if (response.data.updateComment?.errors) {
-              setErrors(toErrorMap(response.data.updateComment.errors));
-            } else {
-              router.back();
-            }
-          }}
-        >
-          {({ isSubmitting }) => (
+      <Formik
+        initialValues={{ text: data.comment.text }}
+        onSubmit={async ({ text }, { setErrors }) => {
+          const response = await updateComment({
+            variables: { commentId, text },
+            update: (cache) => cache.evict({ fieldName: "comments" }),
+          });
+          if (response.data.updateComment?.errors) {
+            setErrors(toErrorMap(response.data.updateComment.errors));
+          } else {
+            router.back();
+          }
+        }}
+      >
+        {({ isSubmitting }) => (
+          <ItemWrapper>
             <Form>
               <Box mt={4}>
                 <InputField
@@ -61,7 +61,7 @@ const EditComment = () => {
                   name="text"
                   placeholder="text..."
                   label="Comment"
-                  size={5}
+                  size={3}
                 />
               </Box>
 
@@ -70,9 +70,9 @@ const EditComment = () => {
                 update Comment{" "}
               </Button>
             </Form>
-          )}
-        </Formik>
-      </ItemWrapper>
+          </ItemWrapper>
+        )}
+      </Formik>
     </Layout>
   );
 };

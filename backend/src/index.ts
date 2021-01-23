@@ -14,11 +14,12 @@ import { __prod__, COOKIE_NAME } from "./constants";
 import { createConnection } from "typeorm";
 import { Post } from "./entities/Post";
 import { User } from "./entities/User";
-import path from "path";
-import { Upvote } from "./entities/Upvote";
-import { createUserLoader } from "./utils/createUserLoader";
-import { createUpvoteLoader } from "./utils/createUpvoteLoader";
 import { Comment } from "./entities/Comment";
+import path from "path";
+import { Vote } from "./entities/Vote";
+import { createUserLoader } from "./utils/createUserLoader";
+import { createVoteLoader } from "./utils/createVoteLoader";
+
 require("dotenv").config();
 
 const main = async () => {
@@ -30,9 +31,9 @@ const main = async () => {
     logging: false,
     synchronize: true,
     migrations: [path.join(__dirname, "./migrations/*")],
-    entities: [Post, User, Upvote, Comment],
+    entities: [Post, User, Vote, Comment],
   });
-  await con.runMigrations();
+  //await con.runMigrations();
 
   const app = express();
 
@@ -75,7 +76,7 @@ const main = async () => {
       res,
       redis,
       userLoader: createUserLoader(),
-      upvoteLoader: createUpvoteLoader(),
+      voteLoader: createVoteLoader(),
     }),
   });
 

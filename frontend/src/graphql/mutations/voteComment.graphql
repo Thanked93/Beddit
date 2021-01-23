@@ -1,0 +1,3 @@
+mutation VoteComment($id: Int!, $value: Int!) {
+  voteComment(id: $id, value: $value)
+}

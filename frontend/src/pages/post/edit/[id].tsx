@@ -4,6 +4,7 @@ import { withUrqlClient } from "next-urql";
 import { useRouter } from "next/router";
 import React from "react";
 import InputField from "../../../components/InputField";
+import ItemWrapper from "../../../components/layout/ItemWrapper";
 import Layout from "../../../components/layout/Layout";
 import NotFoundError from "../../../components/NotFoundError";
 import {
@@ -57,28 +58,36 @@ export const EditPost = ({}) => {
         }}
       >
         {({ isSubmitting }) => (
-          <Form>
-            <InputField
-              size={5}
-              name="title"
-              placeholder="title"
-              label="Title"
-            />
-            <Box mt={4}>
+          <ItemWrapper>
+            <Form>
               <InputField
-                isTextarea
-                name="text"
-                placeholder="text..."
-                label="Body"
-                size={5}
+                name="title"
+                placeholder="title"
+                label="Title"
+                size={3}
               />
-            </Box>
-
-            <Button mt={6} type="submit" bg="#8a948d" isLoading={isSubmitting}>
-              {" "}
-              update Post{" "}
-            </Button>
-          </Form>
+              <Box mt={4}>
+                <InputField
+                  isTextarea
+                  name="text"
+                  placeholder="text..."
+                  label="Body"
+                  size={3}
+                />
+              </Box>
+              <Flex justifyContent="center">
+                <Button
+                  mt={6}
+                  type="submit"
+                  bg="#8a948d"
+                  isLoading={isSubmitting}
+                >
+                  {" "}
+                  update Post{" "}
+                </Button>
+              </Flex>
+            </Form>
+          </ItemWrapper>
         )}
       </Formik>
     </Layout>

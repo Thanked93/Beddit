@@ -9,8 +9,8 @@ export async function updatePost(
   text: string,
   req: Req
 ) {
-  const errors = validateInput({title,text})
-  if(errors) return {errors}
+  const errors = validateInput({ title, text });
+  if (errors) return { errors };
   const res = await getConnection()
     .createQueryBuilder()
     .update(Post)
@@ -21,5 +21,5 @@ export async function updatePost(
     })
     .returning("*")
     .execute();
-  return{ post:res.raw[0]}
-}}
+  return { post: res.raw[0] };
+}

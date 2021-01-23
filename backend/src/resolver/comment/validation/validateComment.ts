@@ -7,7 +7,7 @@ export const valdiateComment = (text: string) => {
       },
     ];
   }
-  if (text.length > 2750) {
+  if (text.length > 5500) {
     return [
       {
         field: "text",

@@ -1,12 +1,15 @@
-import { Box, Button, Flex, Heading, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { useRouter } from "next/router";
 import React from "react";
-import { useCommentQuery } from "../../../../generated/graphql";
 import InputField from "../../../../components/InputField";
 import Layout from "../../../../components/layout/Layout";
 import NotFoundError from "../../../../components/NotFoundError";
-import { useCreateCommentMutation } from "../../../../generated/graphql";
+import {
+  CommentDocument,
+  useCommentQuery,
+  useCreateCommentMutation,
+} from "../../../../generated/graphql";
 import { hocApollo } from "../../../../utils/myapollo";
 import { toErrorMap } from "../../../../utils/toErrorMap";
 import { UseIdFromUrl } from "../../../../utils/useIdFromUrl";
@@ -62,7 +65,9 @@ export const CreateComment: React.FC<createCommentProps> = () => {
               onSubmit={async ({ text }, { setErrors }) => {
                 const response = await createComment({
                   variables: { commentId, text },
-                  update: (cache) => cache.evict({ fieldName: "comments" }),
+                  refetchQueries: [
+                    { query: CommentDocument, variables: { id: commentId } },
+                  ],
                 });
 
                 if (response.data.createComment?.errors) {
