@@ -1,23 +1,22 @@
 import {
   Arg,
-  Query,
-  Int,
-  Mutation,
-  Resolver,
   Ctx,
   FieldResolver,
+  Int,
+  Mutation,
+  Query,
+  Resolver,
   Root,
   UseMiddleware,
 } from "type-graphql";
-import { MyContext } from "../../types";
-
-import { getConnection } from "typeorm";
 import { Comment } from "../../entities/Comment";
-import { CommentResponse } from "./types/CommentResponse";
-import { valdiateComment } from "./validation/validateComment";
 import { User } from "../../entities/User";
 import { isAuth } from "../../middleware/isAuth";
-import { Vote } from "../../entities/Vote";
+import { MyContext } from "../../types";
+import { createComment } from "./mutations/createComment";
+import { updateComment } from "./mutations/updateComment";
+import { voteComment } from "./mutations/voteComments";
+import { CommentResponse } from "./types/CommentResponse";
 
 @Resolver(Comment)
 export class CommentResolver {
@@ -38,7 +37,6 @@ export class CommentResolver {
       postId: comment.id,
       userId: req.session.userId,
     });
-    console.log(vote);
     return vote ? vote.score : null;
   }
 
@@ -49,52 +47,7 @@ export class CommentResolver {
     @Arg("value", () => Int) value: number,
     @Ctx() { req }: MyContext
   ) {
-    const upvoteValue = value > 0 ? 1 : -1;
-    const { userId } = req.session;
-    const upvoteEntry = await Vote.findOne({
-      where: { commentId: id, userId },
-    });
-
-    if (upvoteEntry && upvoteEntry.score !== upvoteValue) {
-      await getConnection().transaction(async (tm) => {
-        await tm.query(
-          `
-        update vote
-        set score = $1
-        where "commentId" = $2  and "userId" = $3`,
-          [upvoteValue, id, userId]
-        );
-
-        await tm.query(
-          `
-            update comment
-            set points = points + $1
-            where id = $2
-          `,
-          [2 * upvoteValue, id]
-        );
-      });
-    } else if (!upvoteEntry) {
-      await getConnection().transaction(async (tm) => {
-        await tm.query(
-          `
-          insert into vote ("userId", "commentId", "score")
-          values($1, $2, $3)
-        `,
-          [userId, id, upvoteValue]
-        );
-        await tm.query(
-          `
-          update comment
-          set points = points + $1
-          where id = $2
-        `,
-          [upvoteValue, id]
-        );
-      });
-    }
-
-    return true;
+    return await voteComment(id, req, value);
   }
 
   @Query(() => [Comment])
@@ -117,6 +70,7 @@ export class CommentResolver {
   }
 
   @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
   async deleteComment(
     @Arg("id", () => Int) id: number,
     @Ctx() { req }: MyContext
@@ -126,25 +80,13 @@ export class CommentResolver {
   }
 
   @Mutation(() => CommentResponse, { nullable: true })
+  @UseMiddleware(isAuth)
   async updateComment(
     @Arg("commentId", () => Int) commentId: number,
     @Arg("text") text: string,
     @Ctx() { req }: MyContext
   ) {
-    const errors = valdiateComment(text);
-    if (errors) return { errors };
-    const comment = await getConnection()
-      .createQueryBuilder()
-      .update(Comment)
-      .set({ text })
-      .where('id=:id and "creatorId"=:creatorId', {
-        id: commentId,
-        creatorId: req.session.userId,
-      })
-      .returning("*")
-      .execute();
-
-    return { comment: comment.raw[0] };
+    return await updateComment(commentId, text, req);
   }
 
   @Mutation(() => CommentResponse, { nullable: true })
@@ -155,35 +97,6 @@ export class CommentResolver {
     @Arg("text") text: string,
     @Ctx() { req }: MyContext
   ): Promise<CommentResponse> {
-    const errors = valdiateComment(text);
-    if (errors) return { errors };
-
-    if (commentId) {
-      const comment = await getConnection()
-        .createQueryBuilder()
-        .insert()
-        .into(Comment)
-        .values({
-          creatorId: req.session.userId,
-          parentId: commentId,
-          text: text,
-        })
-        .returning("*")
-        .execute();
-
-      return { comment: comment.raw[0] };
-    }
-    const comment = await getConnection()
-      .createQueryBuilder()
-      .insert()
-      .into(Comment)
-      .values({
-        text: text,
-        creatorId: req.session.userId,
-        postId: postId,
-      })
-      .returning("*")
-      .execute();
-    return { comment: comment.raw[0] };
+    return await createComment(text, req, postId, commentId);
   }
 }

@@ -2,7 +2,6 @@ import "reflect-metadata";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
-import { HelloResolver } from "./resolver/hello";
 import { PostResolver } from "./resolver/post/postResolver";
 import { UserResolver } from "./resolver/user/userResolver";
 import { CommentResolver } from "./resolver/comment/CommentResolver";
@@ -23,7 +22,7 @@ import { createVoteLoader } from "./utils/createVoteLoader";
 require("dotenv").config();
 
 const main = async () => {
-  const con = await createConnection({
+  await createConnection({
     type: "postgres",
     database: process.env.DATABASE_NAME,
     username: process.env.DATABASE_USERNAME,
@@ -33,7 +32,6 @@ const main = async () => {
     migrations: [path.join(__dirname, "./migrations/*")],
     entities: [Post, User, Vote, Comment],
   });
-  //await con.runMigrations();
 
   const app = express();
 
@@ -55,7 +53,7 @@ const main = async () => {
         disableTouch: true,
       }),
       cookie: {
-        maxAge: 1000 * 60 * 60 * 24 * 365 * 10,
+        maxAge: 1000 * 60 * 60 * 24 * 365 * 1,
         httpOnly: true,
         sameSite: "lax",
         secure: __prod__,
@@ -68,7 +66,7 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver, PostResolver, UserResolver, CommentResolver],
+      resolvers: [PostResolver, UserResolver, CommentResolver],
       validate: false,
     }),
     context: ({ req, res }) => ({
